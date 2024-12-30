@@ -4,9 +4,40 @@
     <title>former</title>
     <link rel="stylesheet" href="@/global.css">
   </head>
-  <body class="w-[500px] bg-zinc-200 select-none">
-    <div id="former-log-block" class="rounded border border-slate-500 m-3 min-h-60">
-
+  <body class="w-[300px] bg-zinc-100 select-none">
+    <div id="former-log-block" class="h-[240px] overflow-y-auto overflow-hidden">
+      <!-- simple static div just for testing the design -->
+      <!--div class="text-[12px] flex items-center p-1 space-x-1">
+        <div class="p-1 bg-red-100 border rounded-full">
+          <object type="image/svg+xml" data="/block.svg" class="w-[12px]"></object>
+        </div>
+        <div class="p-1 bg-blue-100 border rounded" title="tab">
+          <object type="image/svg+xml" data="/tab.svg" class="w-[12px]"></object>
+        </div>
+        <div>
+          <p class="line-through">https://foo.com</p>
+        </div>
+      </div-->
+      <div class="w-full h-full relative" style="background: url('/empty.png');">
+        <div class="absolute top-[50%] w-full">
+          <h2 class="text-center text-sm">its empty here, as should be</h2>
+        </div>  
+      </div>
+    </div>
+    <div class="p-2 border-t border-gray-500 space-y-2">
+      <div class="border border-gray-400 rounded select-text overflow-hidden">
+        <p id="verse" class="p-1 text-sm italic"></p>
+        <div class="p-1 bg-slate-50 border-t border-gray-400 text-xs bg-yellow-50">
+          <p id="verse-ref"></p>
+        </div>
+      </div>
+      <div id="incognito-enable-message" class="hidden p-2 text-sm bg-yellow-50 text-yellow-900 border border-yellow-400 rounded">
+        <p>
+          look like the plugin is not enabled in incognito mode.<br>
+          <a class="text-blue-500 underline" href="https://support.google.com/chrome/a/answer/13130396" target="_blank">chrome</a>
+          <a class="text-blue-500 underline" href="https://support.mozilla.org/en-US/kb/extensions-private-browsing" target="_blank">firefox</a>
+        </p>
+      </div>
     </div>
     <script src="popup.ts" type="module"></script>
   </body>

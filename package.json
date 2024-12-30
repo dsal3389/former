@@ -4,8 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "build": "tsc && vite build && vite build -c vite.config.background.js && cp manifest.json dist",
-    "dev-popup": "vite preview"
+    "build": "tsc && vite build && vite build -c vite.config.background.js && cp manifest.json dist"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.287",
