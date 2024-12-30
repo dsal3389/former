@@ -12,7 +12,11 @@
     "<all_urls>"
   ],
   "browser_action": {
-    "default_popup": "src/popup/index.html"
+    "default_popup": "src/popup/index.html",
+    "default_title": "former - do not dwell on the past",
+    "default_icon": {
+      "32": "former.png"
+    }
   },
   "manifest_version": 2
 }
