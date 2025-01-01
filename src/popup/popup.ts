@@ -1,7 +1,12 @@
 import { BIBLE_QUOTES, type BibleQuote } from '@/_lib/consts';
-import { Message, MessageType } from '@/_lib/messages';
+import { Message, Variant } from '@/_lib/messages';
+import Client from '@/_lib/communication/client';
 import $ from 'jquery';
 
+let client = new Client();
+
+// takes a message object, and returns the html
+// representation of the message made with jquery
 function messageHTML(message: Message): JQuery<HTMLDivElement> {
     let container = $("<div></div>") as JQuery<HTMLDivElement>;
     container.addClass(["text-[12px]", "flex", "items-center", "p-1", "space-x-1"]);
@@ -13,7 +18,7 @@ function messageHTML(message: Message): JQuery<HTMLDivElement> {
     let variantDiv = $("<div></div>") as JQuery<HTMLDivElement>;
     variantDiv.addClass(["p-1", "bg-blue-100", "border", "rounded"]);
     
-    if (message.type === MessageType.Tab) {
+    if (message.variant === Variant.Tab) {
         variantDiv.append($("<object type=\"image/svg+xml\" data=\"/tab.svg\" class=\"w-[12px]\"></object>"));
     }
 
@@ -22,6 +27,15 @@ function messageHTML(message: Message): JQuery<HTMLDivElement> {
 
     container.append(blockDiv, variantDiv, urlDiv);
     return container;
+}
+
+function setMessagesHTML(messages: Message[]) {
+    if (messages.length === 0) {
+        return;
+    }
+    let div = $("#former-log-block");
+    div.empty();
+    div.append(messages.map((m) => messageHTML(m)));
 }
 
 function randomBibleQuote(): BibleQuote {
@@ -33,19 +47,7 @@ let quote = randomBibleQuote();
 $("#verse").text(`"${quote.text}"`);
 $("#verse-ref").text(`${quote.book} ${quote.chapter}:${quote.verse}`);
 
-let port = chrome.runtime.connect();
-port.onMessage.addListener((messages: Message[]) => {
-    if (messages.length === 0) {
-        return;
-    }
-
-    let div = $("#former-log-block");
-    div.empty();
-
-    for(let message of messages) {
-        div.append(messageHTML(message))
-    }
-});
+client.messages().then(setMessagesHTML);
 
 chrome.extension.isAllowedIncognitoAccess((enabled) => {
     if (!enabled) {

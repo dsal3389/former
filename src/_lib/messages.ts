@@ -1,11 +1,5 @@
-import Deque from "./deque";
 
-export enum Action {
-    Permit,
-    Deny,
-}
-
-export enum MessageType {
+export enum Variant {
     Tab,
     Traffic,
 }
@@ -13,32 +7,15 @@ export enum MessageType {
 // represent `former` plugin event message
 // used everywhere
 export class Message {
-    action: Action;
-    type: MessageType;
     url: string;
+    variant: Variant;
+    reason: string | null;
+    deletable: boolean;
 
-    constructor(action: Action, type: MessageType, url: string) {
-        this.action = action;
-        this.type = type;
+    constructor(variant: Variant, url: string, reason: string | null, deletable: boolean) {
         this.url = url;
-    }
-}
-
-// MessageLisener create a Deque<Message> and 
-// automatically listen for events from `chrome.runtime.onMessage`,
-// when message is recived, dispatch a new event
-export class MessageQueue {
-    private deque: Deque<Message>;
-
-    constructor(size: number) {
-        this.deque = new Deque(size);
-    }
-
-    get messages(): Message[] {
-        return [...this.deque]
-    }
-
-    addMessage(message: Message): boolean {
-        return this.deque.unshift(message);
+        this.variant = variant;
+        this.reason = reason;
+        this.deletable = deletable;
     }
 }

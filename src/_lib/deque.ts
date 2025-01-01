@@ -27,7 +27,7 @@ export default class Deque<T> {
     // adds data to the start of the queue, if queue size
     // is reached, pop item from the end of the queue, returned
     // boolean value inidicate if item was poped
-    unshift(data: T): boolean {
+    unshift = (data: T): boolean => {
         let node = new Node(data, null, null);
         let poped = false;
         this.len++;
@@ -55,7 +55,7 @@ export default class Deque<T> {
     // remove item from the end of the queue and
     // return the poped item value, if queue was empty
     // and no item were poped, return `null`
-    pop(): T | null {
+    pop = (): T | null => {
         if(this.tail === null) {
             return null;
         }
