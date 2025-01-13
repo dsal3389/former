@@ -32,6 +32,6 @@ export default class Client {
     }
 
     messages = (): Promise<Message[]> => {
-        return this.request<null, Message[]>({ data: "messages" });
+        return this.request<null, Message[]>({ action: "messages" });
     }
 }

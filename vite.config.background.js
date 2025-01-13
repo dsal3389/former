@@ -1,5 +1,8 @@
+import url from "url";
 import path from "path";
+import { globSync} from 'glob';
 import { defineConfig } from "vite";
+
 
 export default defineConfig({
     resolve: {
@@ -9,14 +12,14 @@ export default defineConfig({
     build: {
         outDir: "dist/background",
         rollupOptions: {
-            input: "src/background/background.ts",
+            input: Object.fromEntries(
+                globSync("src/background/**/*.ts").map(file => [
+                    path.relative("src/background", file.slice(0, file.length - path.extname(file).length)),
+                    url.fileURLToPath(new URL(file, import.meta.url))
+                ])
+            ),
             output: {
-                inlineDynamicImports: true,
-                entryFileNames: (chunkInfo) => {
-                // set the background script in a well known place
-                // seperated from other modules
-                return "background.js";
-            }
+                entryFileNames: "[name].js"
         }}
     }
 })

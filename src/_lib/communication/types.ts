@@ -1,7 +1,7 @@
-type MessageData = 'messages' | 'abort';
+type RequestAction = 'messages' | 'abort';
 
 export interface Request<T> {
-    data: MessageData,
+    action: RequestAction,
     payload?: T
 }
 
