@@ -1,42 +1,111 @@
 import { BIBLE_QUOTES, type BibleQuote } from '@/_lib/consts';
-import { Message, Variant } from '@/_lib/messages';
+import { Message } from '@/_lib/messages';
 import Client from '@/_lib/communication/client';
 import $ from 'jquery';
 
 let client = new Client();
 
-// takes a message object, and returns the html
-// representation of the message made with jquery
-function messageHTML(message: Message): JQuery<HTMLDivElement> {
-    let container = $("<div></div>") as JQuery<HTMLDivElement>;
-    container.addClass(["text-[12px]", "flex", "items-center", "p-1", "space-x-1"]);
-
-    let blockDiv = $("<div></div>") as JQuery<HTMLDivElement>;
-    blockDiv.addClass(["p-1", "bg-red-100", "border", "rounded-full"]);
-    blockDiv.append($("<object type=\"image/svg+xml\" data=\"/block.svg\" class=\"w-[12px]\"></object>"));
-
-    let variantDiv = $("<div></div>") as JQuery<HTMLDivElement>;
-    variantDiv.addClass(["p-1", "bg-blue-100", "border", "rounded"]);
-    
-    if (message.variant === Variant.Tab) {
-        variantDiv.append($("<object type=\"image/svg+xml\" data=\"/tab.svg\" class=\"w-[12px]\"></object>"));
-    }
-
-    let urlDiv = $("<div></div>") as JQuery<HTMLDivElement>;
-    urlDiv.append($(`<p class="line-through">${message.url}</p>`))
-
-    container.append(blockDiv, variantDiv, urlDiv);
-    return container;
+enum TrafficContainerKind {
+    Empty,
+    List,
+    Details
 }
 
-function setMessagesHTML(messages: Message[]) {
-    if (messages.length === 0) {
+interface TrafficContainerEmptyView {
+    kind: TrafficContainerKind.Empty
+}
+
+interface TrafficContainerListView {
+    kind: TrafficContainerKind.List,
+    messages: Message[]
+}
+
+interface TrafficContainerDetailsView {
+    kind: TrafficContainerKind.Details,
+    message: Message,
+}
+
+type TrafficContainerView = TrafficContainerEmptyView | TrafficContainerListView | TrafficContainerDetailsView;
+
+function viewMessageDetails(_message: Message) {
+    let view = $("#traffic-details-view");
+
+    // this should not happen, element is already displayed
+    // but another attempt was made to display details
+    if(view.css("display") !== "none") {
         return;
     }
-    let div = $("#former-log-block");
-    div.empty();
-    div.append(messages.map((m) => messageHTML(m)));
+
+    view
+        .show()
+        .animate({ top: 0 }, 300, function() {
+            $("#traffic-details-head > button").on("click", () => {
+                view.animate({ top: "100%" }, 130, function() { view.hide() });
+            });
+        });
+
 }
+
+function emptyTrafficContainer() {
+    $("#former-traffic-container").children().each(function() {
+        $(this).hide();
+    });
+    $("#traffic-empty-view").show();
+}
+
+function listTrafficContainer(messages: Message[]) {
+    $("#traffic-empty-view").fadeOut(300);
+    $("#traffic-list-view").show();
+    let listCntr = $("#traffic-list");
+
+    messages.forEach((message, i) => {
+        $(document.createElement("div"))
+            .addClass("traffic")
+            .html(function() {
+                let url = $(document.createElement("p"))
+                    .text(message.url);
+                // let reasonIcon;
+                
+                // switch(message.reason) {
+                //     case Reason.Domain:
+                //         reasonIcon = $(document.createElement("svg")).load("tab.svg");
+                // }
+                // return reasonIcon!.html() + url.html();
+                return url.html();
+            })
+            .on("click", function() {
+                listCntr.css("overflow-y", "hidden");
+                viewMessageDetails(message);
+            })
+            .hide()
+            .appendTo(listCntr)
+            .fadeIn(500 + (i * 100));
+        }
+    )
+}
+
+function setTrafficContainerView(view: TrafficContainerView) {
+    switch (view.kind) {
+        case TrafficContainerKind.Empty:
+            emptyTrafficContainer();
+            break;
+        case TrafficContainerKind.List:
+            listTrafficContainer(view.messages);
+            break;
+    }
+}
+
+client.messages().then((messages) => {
+    if (messages.length === 0) {
+        setTrafficContainerView({ kind: TrafficContainerKind.Empty });
+    } else {
+        setTrafficContainerView({ kind: TrafficContainerKind.List, messages: messages });
+    }
+});
+
+
+
+
 
 function randomBibleQuote(): BibleQuote {
     let index = Math.floor(Math.random() * BIBLE_QUOTES.length);
@@ -46,8 +115,6 @@ function randomBibleQuote(): BibleQuote {
 let quote = randomBibleQuote();
 $("#verse").text(`"${quote.text}"`);
 $("#verse-ref").text(`${quote.book} ${quote.chapter}:${quote.verse}`);
-
-client.messages().then(setMessagesHTML);
 
 chrome.extension.isAllowedIncognitoAccess((enabled) => {
     if (!enabled) {

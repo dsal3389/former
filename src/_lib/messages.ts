@@ -1,12 +1,12 @@
 
-// the variant defines what kind of block
-// happend, if it was a traffic or tab
-export enum Variant {
+// the Effected defines what was effected
+// by the trigger
+export enum Effected {
     Tab,
     Traffic,
 }
 
-export enum FilterRule {
+export enum Reason {
     // domain is blacklisted and filtered
     Domain,
     
@@ -19,28 +19,35 @@ export enum FilterRule {
     Custom
 }
 
+export interface MessageProps {
+    url: string, 
+    effected: Effected,
+    reason: Reason, 
+    details: string | null
+}
+
 // represent `former` plugin event message
 // used everywhere
 export class Message {
     url: string;
-    variant: Variant;
-    filterRule: FilterRule;
+    effected: Effected;
+    reason: Reason;
 
     // details provide the user more information
     // about why the action happened, this is more relevent
     // for the `Keyword` and `Domain` FilterRule variants 
     details: string | null;
 
-    constructor(variant: Variant, url: string, filterRule: FilterRule, details: string | null) {
+    constructor({ url, effected, reason, details }: MessageProps) {
         this.url = url;
-        this.variant = variant;
-        this.filterRule = filterRule;
+        this.effected = effected;
+        this.reason = reason;
         this.details = details;
     }
 
     // returns a boolean value inidicating 
     // if the rule can be deleted from filtering
     get deleteable(): boolean {
-        return this.filterRule === FilterRule.Custom;
+        return this.reason === Reason.Custom;
     }
 }

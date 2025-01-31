@@ -4,24 +4,30 @@
     <title>former</title>
     <link rel="stylesheet" href="@/global.css">
   </head>
-  <body class="w-[300px] bg-zinc-100 select-none">
-    <div id="former-log-block" class="h-[240px] overflow-y-auto overflow-hidden">
-      <!-- simple static div just for testing the design -->
-      <!--div class="text-[12px] flex items-center p-1 space-x-1">
-        <div class="p-1 bg-red-100 border rounded-full">
-          <object type="image/svg+xml" data="/block.svg" class="w-[12px]"></object>
-        </div>
-        <div class="p-1 bg-blue-100 border rounded" title="tab">
-          <object type="image/svg+xml" data="/tab.svg" class="w-[12px]"></object>
-        </div>
-        <div>
-          <p class="line-through">https://foo.com</p>
-        </div>
-      </div-->
-      <div class="w-full h-full relative" style="background: url('/empty.png');">
+  <body class="w-[300px] bg-zinc-50 select-none">
+    <div id="former-traffic-container" class="relative h-[240px] overflow-hidden">
+
+      <!-- display default, when there is no log traffic -->
+      <div id="traffic-empty-view" class="w-full h-full relative" style="background: url('/empty.png');">
         <div class="absolute top-[50%] w-full">
           <h2 class="text-center text-sm">its empty here, as should be</h2>
-        </div>  
+        </div>
+      </div>
+
+      <!-- display list of log traffics -->
+      <div id="traffic-list-view" class="h-full">
+        <div id="traffic-list"></div>
+
+        <!-- display details about specific traffic log -->
+        <div 
+          id="traffic-details-view" 
+          class="overflow-hidden hidden bg-zinc-50 absolute top-[100%] w-full h-full border-t border-black"
+        >
+          <div id="traffic-details-head" class="p-1 border-b border-black">
+            <button>back</button>
+          </div>
+          <div id="traffic-details" class="bg-red-400"></div>
+        </div>
       </div>
     </div>
     <div class="p-2 border-t border-gray-500 space-y-2">

@@ -1,5 +1,5 @@
 import Deque from "@/_lib/deque";
-import { Message, Variant, FilterRule } from "@/_lib/messages";
+import { Message, Effected, Reason } from "@/_lib/messages";
 import type { RequestWithId, Response } from "@/_lib/communication/types";
 
 const BLACKLISTED_DOMAINS = [
@@ -33,7 +33,13 @@ class Background {
   // function to handle (pre) web request, by default if this function is called
   // it means we git a Top Level Domain, so the default behavior is to just cancel the request
   beforeRequestHandler = (details: chrome.webRequest.WebRequestDetails): chrome.webRequest.BlockingResponse => {
-    this.queue.unshift(new Message(Variant.Traffic, details.url, FilterRule.Domain, null));
+    this.queue.unshift(new Message({
+        url: details.url, 
+        effected: Effected.Traffic, 
+        reason: Reason.Domain, 
+        details: null
+      }
+    ));
     return { cancel: true };
   }
 
@@ -41,7 +47,12 @@ class Background {
   // it will close the current tab, because it will only be called when we hit Top Level Domain
   beforeTabNavigateHandler = (details: chrome.webNavigation.WebNavigationUrlCallbackDetails): void => {
     chrome.tabs.remove(details.tabId, () => {
-      this.queue.unshift(new Message(Variant.Tab, details.url, FilterRule.Domain, null));
+      this.queue.unshift(new Message({
+          url: details.url, 
+          effected: Effected.Tab, 
+          reason: Reason.Domain, 
+          details: null
+      }));
     });
   }
 
