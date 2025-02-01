@@ -10,5 +10,12 @@
         @apply text-sm;
         @apply cursor-context-menu;
         @apply line-through;
+        @apply border;
+        @apply border-transparent;
+    }
+
+    .traffic:hover {
+        @apply bg-gray-100;
+        @apply border-gray-300;
     }
 }

@@ -38,7 +38,7 @@ function viewMessageDetails(_message: Message) {
 
     view
         .show()
-        .animate({ top: 0 }, 300, function() {
+        .animate({ top: 0 }, 450, function() {
             $("#traffic-details-head > button").on("click", () => {
                 view.animate({ top: "100%" }, 130, function() { view.hide() });
             });
